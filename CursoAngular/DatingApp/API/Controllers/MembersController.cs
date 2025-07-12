@@ -1,14 +1,12 @@
 using API.Data;
 using API.Entities;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
-public class MembersController(AppDbContext dbContext) : ControllerBase
+public class MembersController(AppDbContext dbContext) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<AppUser>>> GetMembers()
@@ -17,7 +15,8 @@ public class MembersController(AppDbContext dbContext) : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<AppUser>> GetMember(int id)
+    [Authorize]
+    public async Task<ActionResult<AppUser>> GetMember(string id)
     {
         var member = await dbContext.Users.FindAsync(id);
         if (member == null)
@@ -42,7 +41,7 @@ public class MembersController(AppDbContext dbContext) : ControllerBase
         {
             return BadRequest();
         }
-        
+
         dbContext.Entry(member).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
         dbContext.SaveChanges();
         return NoContent();
@@ -56,7 +55,7 @@ public class MembersController(AppDbContext dbContext) : ControllerBase
         {
             return NotFound();
         }
-        
+
         dbContext.Users.Remove(member);
         dbContext.SaveChanges();
         return NoContent();
