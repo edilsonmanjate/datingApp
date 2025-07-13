@@ -13,7 +13,7 @@ namespace API.Controllers
     public class AccountController(AppDbContext dbcontext, ITokenService tokenService) : BaseApiController
     {
         [HttpPost("register")]
-        public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
+        public async Task<ActionResult<UserDto>> Register([FromBody] RegisterDto registerDto)
         {
             if (await UserExists(registerDto.email))
             {
@@ -32,7 +32,7 @@ namespace API.Controllers
             dbcontext.Users.Add(user);
             await dbcontext.SaveChangesAsync();
 
-            return Ok(user.ToDto(tokenService));
+            return user.ToDto(tokenService);
 
         }
 
@@ -55,7 +55,7 @@ namespace API.Controllers
                 if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid password");
             }
 
-            return Ok(user.ToDto(tokenService));
+            return user.ToDto(tokenService);
 
         }
     }

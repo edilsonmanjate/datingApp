@@ -1,24 +1,25 @@
 using API.Data;
 using API.Entities;
+using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-public class MembersController(AppDbContext dbContext) : BaseApiController
+public class MembersController(IMemberRepository memberRepository) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<AppUser>>> GetMembers()
+    public async Task<ActionResult<IReadOnlyList<Member>>> GetMembers()
     {
-        return await dbContext.Users.ToListAsync();
+        return Ok(await memberRepository.GetMembersAsync());
     }
 
     [HttpGet("{id}")]
     [Authorize]
-    public async Task<ActionResult<AppUser>> GetMember(string id)
+    public async Task<ActionResult<Member>> GetMember(string id)
     {
-        var member = await dbContext.Users.FindAsync(id);
+        var member = await memberRepository.GetMemberByIdAsync(id);
         if (member == null)
         {
             return NotFound();
@@ -26,39 +27,55 @@ public class MembersController(AppDbContext dbContext) : BaseApiController
         return member;
     }
 
-    [HttpPost]
-    public IActionResult CreateMember(AppUser member)
+    [HttpGet("{id}/photos")]
+    public async Task<ActionResult<IReadOnlyList<Photo>>> GetPhotosForMember(string id)
     {
-        dbContext.Users.Add(member);
-        dbContext.SaveChanges();
-        return CreatedAtAction(nameof(GetMember), new { id = member.Id }, member);
-    }
-
-    [HttpPut("{id}")]
-    public ActionResult UpdateMember(int id, AppUser member)
-    {
-        if (!id.Equals(member.Id))
+        var photos = await memberRepository.GetPhotosForMemberAsync(id);
+        if (photos == null || !photos.Any())
         {
-            return BadRequest();
+            return NotFound();
+        }
+        return Ok(photos);
+    }
+    [Authorize]
+    [HttpPost]
+    public async Task<ActionResult<Member>> CreateMember(Member member)
+    {
+        if (member == null)
+        {
+            return BadRequest("Member data is required.");
         }
 
-        dbContext.Entry(member).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-        dbContext.SaveChanges();
-        return NoContent();
+        memberRepository.Update(member);
+        if (await memberRepository.SaveAllAsync())
+        {
+            return CreatedAtAction(nameof(GetMember), new { id = member.Id }, member);
+        }
+        return BadRequest("Failed to create member.");
     }
 
-    [HttpDelete("{id}")]
-    public ActionResult DeleteMember(int id)
+    [Authorize]
+    [HttpPut("{id}")]
+    public async Task<ActionResult> UpdateMember(string id, Member member)
     {
-        var member = dbContext.Users.Find(id);
-        if (member == null)
+        if (id != member.Id)
+        {
+            return BadRequest("Member ID mismatch.");
+        }
+
+        var existingMember = await memberRepository.GetMemberByIdAsync(id);
+        if (existingMember == null)
         {
             return NotFound();
         }
 
-        dbContext.Users.Remove(member);
-        dbContext.SaveChanges();
-        return NoContent();
+        memberRepository.Update(member);
+        if (await memberRepository.SaveAllAsync())
+        {
+            return NoContent();
+        }
+        return BadRequest("Failed to update member.");
     }
 
+    
 }
