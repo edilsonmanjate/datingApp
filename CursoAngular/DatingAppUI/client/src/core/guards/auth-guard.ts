@@ -7,7 +7,7 @@ export const authGuard: CanActivateFn = () => {
   const accountService = inject(AccountService);
   const toast = inject(ToastService);
 
-  if (accountService.curentUser()) return true;
+  if (accountService.currentUser()) return true;
   else{
     toast.error('You must be logged in to access this page.');
     return false;

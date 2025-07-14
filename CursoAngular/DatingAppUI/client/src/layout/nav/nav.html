@@ -14,7 +14,7 @@
         </div>
 
         <nav class="flex gap-3 my-2 uppercase text-lg text-white">
-            @if (accountService.curentUser(); ) {
+            @if (accountService.currentUser(); ) {
             <a routerLink="/members" routerLinkActive="text-accent"
                 [routerLinkActiveOptions]="{exact: true}">Matches</a>
             <a routerLink="/lists" routerLinkActive="text-accent">List</a>
@@ -24,6 +24,12 @@
 
 
         </nav>
+
+        @if (busyService.busyRequestsCount()>0) {
+            <span class="loading loading-spinner text-accent"></span>
+        }
+
+
         <div class="flex align-middle ml-auto gap-3">
 
             <div class="dropdown mr-5 dropdown-end">
@@ -36,7 +42,7 @@
                     </svg>
                         <span class="text-xs">{{selectedTheme()}}</span>
                 </button>
-                <ul tabindex="1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                <ul tabindex="1" class="dropdown-content z-50 menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
                @for (theme of themes; track $index) {
                 <li (click)="handleSelectTheme(theme)" class="cursor-pointer">
                     <a >{{theme}}</a>
@@ -45,14 +51,14 @@
                 </ul>
             </div>
 
-            @if (accountService.curentUser(); as user) {
+            @if (accountService.currentUser(); as user) {
             <div class="dropdown dropdown-end">
                 <div tabindex="0" role="button" class="flex items-center text-white text-xl gap-3 cursor-pointer">
                     <img [src]="user?.imageUrl || '/user.png'" alt="user avatar" class="w-10 h-10 rounded-full">
                     <span>{{user.displayName}}</span>
                 </div>
                 <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
-                    <li><a>Profile</a></li>
+                    <li><a routerLink="/members/{{user.id}}" >Edit profile</a></li>
                     <li><a (click)="logout()">Logout</a></li>
                 </ul>
             </div>

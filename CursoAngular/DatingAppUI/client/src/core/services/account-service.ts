@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 })
 export class AccountService {
   private http = inject(HttpClient);
-  curentUser = signal<User | null>(null);
+  currentUser = signal<User | null>(null);
 
   private baseUrl = environment.apiUrl;
   
@@ -36,12 +36,12 @@ export class AccountService {
   }
 
   setCurrentUser(user: User) {
-    this.curentUser.set(user);
+    this.currentUser.set(user);
     localStorage.setItem('user', JSON.stringify(user));
   }
 
   logout() {
-    this.curentUser.set(null);
+    this.currentUser.set(null);
     localStorage.removeItem('user');
   }
 
