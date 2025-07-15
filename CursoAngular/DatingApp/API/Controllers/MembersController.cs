@@ -3,6 +3,7 @@ using API.Data;
 using API.DTOs;
 using API.Entities;
 using API.Extentions;
+using API.Helpers;
 using API.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,12 +11,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
-public class MembersController(IMemberRepository memberRepository,    IPhotoService photoService) : BaseApiController
+public class MembersController(IMemberRepository memberRepository, IPhotoService photoService) : BaseApiController
 {
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<Member>>> GetMembers()
+    public async Task<ActionResult<IReadOnlyList<Member>>> GetMembers(PagingParams pagingParams)
     {
-        return Ok(await memberRepository.GetMembersAsync());
+        return Ok(await memberRepository.GetMembersAsync(pagingParams));
     }
 
     [HttpGet("{id}")]
