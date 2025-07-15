@@ -115,7 +115,7 @@
         "City": "Herald",
         "Country": "Poland",
         "ImageUrl": "https://randomuser.me/api/portraits/men/11.jpg"
-    },
+    }, 
     {
         "Id": "davis-id",
         "Email": "davis@test.com",

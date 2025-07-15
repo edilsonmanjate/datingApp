@@ -159,3 +159,5 @@ C:\Projectos\CursoAngular\DatingApp\api\bin\Debug\net9.0\Microsoft.AspNetCore.Au
 C:\Projectos\CursoAngular\DatingApp\api\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.dll
 C:\Projectos\CursoAngular\DatingApp\api\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Projectos\CursoAngular\DatingApp\api\bin\Debug\net9.0\Data\UserSeedData.json
+C:\Projectos\CursoAngular\DatingApp\api\bin\Debug\net9.0\CloudinaryDotNet.dll
+C:\Projectos\CursoAngular\DatingApp\api\bin\Debug\net9.0\Newtonsoft.Json.dll
